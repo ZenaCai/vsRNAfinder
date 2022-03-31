@@ -1,4 +1,4 @@
-# **vsRNAfinder **
+# **vsRNAfinder**
 
 vsRNAfinder is a novel method for identifying viral small RNAs from small RNA-Seq data
 
