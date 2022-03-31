@@ -8,7 +8,7 @@ vsRNAfinder is a novel method for identifying viral small RNAs from small RNA-Se
 
 1. bowtie 1.3.0
 2. samtools 1.9
-3. bedtools v2.29.2
+3. bedtools 2.29.2
 4. RNAfold 2.4.18
 
 ### R Dependencies
