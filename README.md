@@ -9,7 +9,7 @@ vsRNAfinder is a novel method for identifying viral small RNAs from small RNA-Se
 1. bowtie 1.3.0
 2. samtools 1.9
 3. bedtools 2.29.2
-4. RNAfold 2.4.18
+4. RNAfold 2.4.18 ( Viennarna 2.4.18 )
 
 ### R Dependencies
 
@@ -25,6 +25,41 @@ Base on python 3.6.8
 2. Pandas 1.1.5
 3. Scipy 1.5.2
 4. Pysam 0.15.3
+
+## Download & Installation
+
+Download vsRNAfinder with Git from GitHub
+
+~~~
+git clone https://github.com/ZenaCai/vsRNAfinder.git
+~~~
+
+Create a new conda environment
+
+~~~
+conda create -n vsRNAfinder python=3.6.8
+conda activate vsRNAfinder
+~~~
+
+Install Packages
+
+~~~
+conda install -c bioconda bowtie=1.3.0
+conda install -c bioconda samtools=1.9
+conda install -c bioconda bedtools=2.29.2
+conda install -c bioconda viennarna=2.4.18
+~~~
+
+Install R and Python dependencies
+
+~~~
+conda install r-base=3.6.1
+conda install -c conda-forge r-pracma=2.3.3
+conda install numpy=1.19.2
+conda install pandas=1.1.5
+conda install scipy=1.5.2
+conda install -c bioconda pysam=0.15.3
+~~~
 
 ## Usage
 
