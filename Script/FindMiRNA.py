@@ -109,12 +109,12 @@ for filename in os.listdir(FindPeak_dir):
             df_sub = df_sub[(df_sub['Start_rpm'] >= rpm) & (df_sub['End_rpm'] >= rpm)]
         if count is not None:
             df_sub = df_sub[(df_sub['Start_count'] >= rpm) & (df_sub['End_count'] >= rpm)]
-        df_sub['gap'] = ['.']*df_sub.shape[0]
+        df_sub['Gap'] = ['.']*df_sub.shape[0]
         df_sub['Strand'] = df_sub['Strand'].replace('negative', '-')
         df_sub['Strand'] = df_sub['Strand'].replace('positive', '+')
         df_sub_positive = df_sub[df_sub['Strand'] == '+']
         df_sub_negative = df_sub[df_sub['Strand'] == '-']
-        colname = ['Site', 'Chr', 'Length', 'Strand', 'Start_lst', 'End_lst', 'Start_count', 'End_count', 'Start_rpm', 'End_rpm']
+        colname = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
         df_all = pd.concat([df_all, df_sub_positive[colname], df_sub_negative[colname]])
         df_positive = pd.concat([df_positive, df_sub_positive])
         df_negative = pd.concat([df_negative, df_sub_negative])
@@ -127,17 +127,17 @@ if not df_all.empty:
         df = pd.DataFrame()
         if tag == 5:
             ### 5'
-            df_positive['Start_extend'] = df_positive['Start_min'] - step*ii
-            df_positive['End_extend'] = df_positive['End_max'] + df_positive['Length'] + loop + step*ii
-            df_negative['Start_extend'] = df_negative['Start_min'] - (df_negative['Length'] + loop + step*ii)
-            df_negative['End_extend'] = df_negative['End_max'] + step*ii
+            df_positive['Start_extend'] = df_positive['Start'] - step*ii
+            df_positive['End_extend'] = df_positive['End'] + df_positive['Length'] + loop + step*ii
+            df_negative['Start_extend'] = df_negative['Start'] - (df_negative['Length'] + loop + step*ii)
+            df_negative['End_extend'] = df_negative['End'] + step*ii
         else:
             ### 3'
-            df_positive['Start_extend'] = df_positive['Start_min'] - (df_positive['Length'] + loop + step*ii)
-            df_positive['End_extend'] = df_positive['End_max'] + step*ii
-            df_negative['Start_extend'] = df_negative['Start_min'] - step*ii
-            df_negative['End_extend'] = df_negative['End_max'] + (df_negative['Length'] + loop + step*ii)
-        colname = ['Chr', 'Start_extend', 'End_extend', 'Site', 'gap', 'Strand']
+            df_positive['Start_extend'] = df_positive['Start'] - (df_positive['Length'] + loop + step*ii)
+            df_positive['End_extend'] = df_positive['End'] + step*ii
+            df_negative['Start_extend'] = df_negative['Start'] - step*ii
+            df_negative['End_extend'] = df_negative['End'] + (df_negative['Length'] + loop + step*ii)
+        colname = ['Chr', 'Start_extend', 'End_extend', 'Site', 'Gap', 'Strand']
         df = pd.concat([df, df_positive[colname], df_negative[colname]])
         df.loc[df['Start_extend'] < 0, 'Start_extend'] = 0
         for i in dict_chr:
@@ -163,7 +163,7 @@ if not df_all.empty:
         df_sRNA_other = df_all[df_all['Site'].str.contains('|'.join(list(set(sRNA_all) - set(smiRNA_lst))))].copy()
     else:
         df_sRNA_other = df_all[df_all['Site'].str.contains('None')].copy()
-    df_smiRNA['Type'] = ['miRNA candidate'] * df_smiRNA.shape[0]
+    df_smiRNA['Type'] = ['miRNA'] * df_smiRNA.shape[0]
     df_sRNA_other['Type'] = ['sRNA'] * df_sRNA_other.shape[0]
     df_sRNA = pd.concat([df_sRNA, df_smiRNA, df_sRNA_other])
     df_sRNA['Sequence'] = df_seq[df_sRNA['Site'].tolist()].loc[0, ].tolist()

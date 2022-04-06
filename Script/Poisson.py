@@ -97,9 +97,12 @@ if os.path.exists(sRNAfile):
         sig_site.append(i.result())
 
     df_filter_sig = df_filter[df_filter['Site'].isin(sig_site)]
-    df_filter_sig.to_csv(ouputfile, sep='\t', index=None)
+    column = ["Site", "Chr", "Start_min", "End_max", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
+    df_filter_sig_ouput = df_filter_sig[column].copy()
+    df_filter_sig_ouput.columns = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
+    df_filter_sig_ouput.to_csv(ouputfile, sep='\t', index=None)
     column = ["Site", "Chr", "Start_min", "End_max", "Strand"]
-    df_saf = df_filter_sig[column].copy()  #
+    df_saf = df_filter_sig[column].copy()
     df_saf.columns = ["GeneID", "Chr", "Start", "End", "Strand"]
     df_saf['Strand'].replace('positive', '+', inplace=True)
     df_saf['Strand'].replace('negative', '-', inplace=True)

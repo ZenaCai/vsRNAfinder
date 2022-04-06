@@ -61,7 +61,7 @@ def GetResult(samfile, chr, start, end, strand, threshold, cleanread, ID):  # st
     return output
 
 out = open(data + '/sRNA.counts.txt', 'w')
-out.write("sRNA\tChr\tStart\tEnd\tStrand\tLength\tCounts\tRPM\n")
+out.write("sRNA\tChr\tStart\tEnd\tStrand\tLength\tCount\tRPM\n")
 samfile = pysam.AlignmentFile(bam, mode, threads=threads)
 for filename in os.listdir(data):
     if re.search('.saf', filename):
