@@ -183,18 +183,37 @@ required arguments:
 
   Quantification for small RNAs
 
+Each column is described as follows:
+
+| *Column*    | *Description*                                                |
+| ----------- | ------------------------------------------------------------ |
+| Site/sRNA   | Site of the sRNA in format Start-End-Strand-Chr              |
+| Chr         | Chromosome of the sRNA                                       |
+| Start       | Start position of the sRNA                                   |
+| End         | End position of the sRNA                                     |
+| Strand      | Strand of the sRNA                                           |
+| Length      | Length of the sRNA                                           |
+| Start_count | Number of reads starting at the start position of  the sRNA  |
+| End_count   | Number of reads ending at the end position of  the sRNA      |
+| Start_rpm   | The abundance of the start position of the sRNA is normalized using RPM (Reads Per Million) |
+| End_rpm     | The abundance of the  end position of the sRNA is normalized using RPM (Reads Per Million) |
+| Type        | Type of sRNA (miRNA or sRNA)                                 |
+| Sequence    | Sequence of the sRNA                                         |
+| Count       | Number of reads mapping to the sRNA                          |
+| RPM         | The abundance of the sRNA is normalized using RPM (Reads Per Million) |
+
 ### How to run the test dataset using vsRNAfinder
 
 ```shell
 # Step1
-python Preprocessing.py --cleanfq test_data/test.clean.fastq --genome test_data/NC_009334.1.fasta --outdir test_output --prefix test --threads 10
+python Script/Preprocessing.py --cleanfq test_data/test.clean.fastq --genome test_data/NC_009334.1.fasta --outdir test_output --prefix test --threads 10
 # Step2
-python FindSmallRNA.py --data test_output --genomecovfile test.sort.positive.bga.txt --chromosome NC_009334.1 --outdir test_output --strand positive --readfile test.sort.bed --mapInfor test.mapInfo.txt --threads 10
-python FindSmallRNA.py --data test_output --genomecovfile test.sort.negative.bga.txt --chromosome NC_009334.1 --outdir test_output --strand negative --readfile test.sort.bed --mapInfor test.mapInfo.txt --threads 10
+python Script/FindSmallRNA.py --data test_output --genomecovfile test.sort.positive.bga.txt --chromosome NC_009334.1 --outdir test_output --strand positive --readfile test.sort.bed --mapInfor test.mapInfo.txt --threads 10
+python Script/FindSmallRNA.py --data test_output --genomecovfile test.sort.negative.bga.txt --chromosome NC_009334.1 --outdir test_output --strand negative --readfile test.sort.bed --mapInfor test.mapInfo.txt --threads 10
 # Step3
-python FindMiRNA.py --genome test_data/NC_009334.1.fasta --speices virus --data test_output/NC_009334.1
+python Script/FindMiRNA.py --genome test_data/NC_009334.1.fasta --speices virus --data test_output/NC_009334.1
 # Step4
-python Quantification.py --threads 10 --data test_output/NC_009334.1 --bam test_output/test.sort.bam --mapInfor test_output/test.mapInfo.txt
+python Script/Quantification.py --threads 10 --data test_output/NC_009334.1 --bam test_output/test.sort.bam --mapInfor test_output/test.mapInfo.txt
 
 ```
 
