@@ -183,7 +183,7 @@ required arguments:
 
   Quantification for small RNAs
 
-Each column is described as follows:
+Each column of output files is described as follows:
 
 | *Column*    | *Description*                                                |
 | ----------- | ------------------------------------------------------------ |
