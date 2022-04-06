@@ -21,12 +21,12 @@ outdir = args.outdir
 prefix = args.prefix
 if not os.path.exists(outdir):
     os.mkdir(outdir)
-
+bowtie_index = outdir+'/'+prefix+'.bowtie_index.log'
 sam = outdir+'/'+prefix+'.sam'
 map_fastq = outdir+'/'+prefix+'.map.fastq'
 mapInfo = outdir+'/'+prefix+'.mapInfo.txt'
 unmap_fastq = outdir+'/'+prefix+'.unmap.fastq'
-os.system('bowtie-build --threads '+str(threads)+' '+genome+' '+genome+'.bowtie')
+os.system('bowtie-build --threads '+str(threads)+' '+genome+' '+genome+'.bowtie'+' > ' + bowtie_index + ' 2>&1')
 os.system('bowtie --threads '+str(threads)+' -v 0 -m 2 -a '+genome+'.bowtie '+cleanfq+' --un '+unmap_fastq+
           ' --al '+map_fastq+' -S '+sam+' > '+mapInfo + ' 2>&1')
 
