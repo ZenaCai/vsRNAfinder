@@ -114,7 +114,7 @@ for filename in os.listdir(FindPeak_dir):
         df_sub['Strand'] = df_sub['Strand'].replace('positive', '+')
         df_sub_positive = df_sub[df_sub['Strand'] == '+']
         df_sub_negative = df_sub[df_sub['Strand'] == '-']
-        colname = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
+        colname = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm", "Pvalue"]
         df_all = pd.concat([df_all, df_sub_positive[colname], df_sub_negative[colname]])
         df_positive = pd.concat([df_positive, df_sub_positive])
         df_negative = pd.concat([df_negative, df_sub_negative])

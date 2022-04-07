@@ -84,8 +84,7 @@ if os.path.exists(sRNAfile):
         p_lst_filter = [i for i in p_lst if i <= 0.05]
         percentage = len(p_lst_filter) / len(p_lst)
         if p <= pvalue or (p > pvalue and percentage >= 0.8):
-            return site
-
+            return site+'\t'+str(np.percentile(p_lst, 80, interpolation='higher'))
     from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
     p = ProcessPoolExecutor(threads)
     site_result = []
@@ -93,13 +92,22 @@ if os.path.exists(sRNAfile):
         site_result.append(p.submit(GetSigSite, site, df_filter, df_genomecov_all))
     p.shutdown()
     sig_site = []
+    dict_sig = {}
     for i in site_result:
-        sig_site.append(i.result())
-
+        if i.result() is not None:
+            site = i.result().split('\t')[0]
+            sig = i.result().split('\t')[1]
+            sig_site.append(site)
+            if site not in dict_sig:
+                dict_sig[site] = sig
+    df_site_sig = pd.DataFrame([dict_sig]).T
+    df_site_sig = df_site_sig.reset_index().rename(columns={"index": "id"})
+    df_site_sig.columns = ["Site", "Pvalue"]
     df_filter_sig = df_filter[df_filter['Site'].isin(sig_site)]
     column = ["Site", "Chr", "Start_min", "End_max", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
     df_filter_sig_ouput = df_filter_sig[column].copy()
-    df_filter_sig_ouput.columns = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
+    df_filter_sig_ouput = pd.merge(df_filter_sig_ouput, df_site_sig, on='Site')
+    df_filter_sig_ouput.columns = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm", "Pvalue"]
     df_filter_sig_ouput.to_csv(ouputfile, sep='\t', index=None)
     column = ["Site", "Chr", "Start_min", "End_max", "Strand"]
     df_saf = df_filter_sig[column].copy()
