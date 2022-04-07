@@ -129,7 +129,7 @@ required arguments:
 
 ~~~
 
-#### Step3: Annotating sRNA as miRNA in each chromosome (optional step)
+#### Step3: Annotating sRNAs as miRNAs in each chromosome (optional step)
 
 ~~~shell
 usage: FindMiRNA.py [-h] [--rpm RPM | --count COUNT] --genome GENOME --speices
