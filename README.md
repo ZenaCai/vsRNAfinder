@@ -85,7 +85,7 @@ required arguments:
 
 ~~~
 
-#### Step2: sRNA Identification and filtering sRNA by abundance, length,  significance of sRNA
+#### Step2: Identifying sRNAs and filtering sRNAs by abundance of boundry sites, length,  significance of sRNAs
 
 ~~~shell
 usage: FindSmallRNA.py [-h] [--len LEN] [--pvalue PVALUE]
@@ -129,7 +129,7 @@ required arguments:
 
 ~~~
 
-#### Step3: miRNA Identification for each chromosome (optional step)
+#### Step3: Annotating sRNA as miRNA in each chromosome (optional step)
 
 ~~~shell
 usage: FindMiRNA.py [-h] [--rpm RPM | --count COUNT] --genome GENOME --speices
@@ -146,7 +146,7 @@ required arguments:
   --data DATA        output path of FindSmallRNA
 ~~~
 
-#### Step4: Quantification for each chromosome
+#### Step4: Quantifying the abundance of sRNAs in each chromosome
 
 ~~~shell
 usage: Quantification.py [-h] [--threads THREADS] [--threshold THRESHOLD]
@@ -187,20 +187,21 @@ Each column of output files is described as follows:
 
 | *Column*    | *Description*                                                |
 | ----------- | ------------------------------------------------------------ |
-| Site/sRNA   | Site of the sRNA in format Start-End-Strand-Chr              |
-| Chr         | Chromosome of the sRNA                                       |
-| Start       | Start position of the sRNA                                   |
-| End         | End position of the sRNA                                     |
-| Strand      | Strand of the sRNA                                           |
-| Length      | Length of the sRNA                                           |
-| Start_count | Number of reads starting at the start position of  the sRNA  |
-| End_count   | Number of reads ending at the end position of  the sRNA      |
-| Start_rpm   | The abundance of the start position of the sRNA is normalized using RPM (Reads Per Million) |
-| End_rpm     | The abundance of the  end position of the sRNA is normalized using RPM (Reads Per Million) |
+| Site/sRNA   | Site of sRNA in format Start-End-Strand-Chr                  |
+| Chr         | Chromosome of sRNA                                           |
+| Start       | Start position of sRNA                                       |
+| End         | End position of sRNA                                         |
+| Strand      | Strand of sRNA                                               |
+| Length      | Length of sRNA                                               |
+| Start_count | Number of reads starting at the start position of sRNA       |
+| End_count   | Number of reads ending at the end position of sRNA           |
+| Start_rpm   | The abundance of the start position of sRNA is normalized using RPM (Reads Per Million) |
+| End_rpm     | The abundance of the  end position of sRNA is normalized using RPM (Reads Per Million) |
+| Pvalue      | The significance of sRNA based on the Poisson distribution   |
 | Type        | Type of sRNA (miRNA or sRNA)                                 |
-| Sequence    | Sequence of the sRNA                                         |
+| Sequence    | Sequence of sRNA                                             |
 | Count       | Number of reads mapping to the sRNA                          |
-| RPM         | The abundance of the sRNA is normalized using RPM (Reads Per Million) |
+| RPM         | The abundance of sRNA is normalized using RPM (Reads Per Million) |
 
 ### How to run the test dataset using vsRNAfinder
 
