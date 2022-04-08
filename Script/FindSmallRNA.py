@@ -67,51 +67,50 @@ else:
 
 for chr in chromosome:
     outdir = outdir_+'/'+chr
+    outdir_tmp = outdir + '/_tmp'
     if not os.path.exists(outdir):
         os.mkdir(outdir)
-    os.system('python ' + softdir + '/Smooth.py --infile ' + data + '/' + genomecovfile + '.txt' + ' --outdir ' + outdir +
+        os.mkdir(outdir_tmp)
+    os.system('python ' + softdir + '/Smooth.py --infile ' + data + '/' + genomecovfile + '.txt' + ' --outdir ' + outdir_tmp +
               ' --windows_size ' + windows_size + ' --chr ' + chr)
-    if os.path.exists(outdir + '/' + genomecovfile + '.extend.txt.smooth.windows_size.' + windows_size + '.txt'):
+    if os.path.exists(outdir_tmp + '/' + genomecovfile + '.extend.txt.smooth.windows_size.' + windows_size + '.txt'):
         os.system('Rscript ' + softdir + '/FindPeak.R ' + genomecovfile + '.extend.txt.smooth.windows_size.' +
-                  windows_size + '.txt ' + outdir + ' ' + strand + ' ' + peakheight)
+                  windows_size + '.txt ' + outdir_tmp + ' ' + strand + ' ' + peakheight)
         os.system('python ' + softdir + '/FindPeak.py --strand ' + strand +
-                  ' --smoothfile ' + outdir + '/' + genomecovfile + '.extend.txt.smooth.windows_size.' + windows_size + '.txt'
-                  ' --peakfile ' + outdir + '/peak.y_smooth.'+strand+'.txt'
-                  ' --peakInforfile ' + outdir + '/' + peakInforfile +
-                  ' --readfile ' + data + '/' + readfile + ' --bed ' + outdir + '/' + bedfile + ' --chr ' + chr +
-                  ' --outfile ' + outdir + '/' + outfile + ' --threads ' + threads)
-        linecount = len(open(outdir + '/peak.y_smooth.'+strand+'.txt').readlines())
+                  ' --smoothfile ' + outdir_tmp + '/' + genomecovfile + '.extend.txt.smooth.windows_size.' + windows_size + '.txt'
+                  ' --peakfile ' + outdir_tmp + '/peak.y_smooth.'+strand+'.txt'
+                  ' --peakInforfile ' + outdir_tmp+ '/' + peakInforfile +
+                  ' --readfile ' + data + '/' + readfile + ' --bed ' + outdir_tmp + '/' + bedfile + ' --chr ' + chr +
+                  ' --outfile ' + outdir_tmp + '/' + outfile + ' --threads ' + threads)
+        linecount = len(open(outdir_tmp + '/peak.y_smooth.'+strand+'.txt').readlines())
         if linecount != 0:
             if args.len == '15,34':
                 if args.count is not None:
                     os.system('python ' + softdir + '/Poisson.py --method count --count ' + count + ' --cleanread ' + cleanread +
-                              ' --genomecovfile ' + outdir + '/' + genomecovfile + '.extend.txt' +
-                              ' --sRNAfile ' + outdir + '/' + outfile +
+                              ' --genomecovfile ' + outdir_tmp + '/' + genomecovfile + '.extend.txt' +
+                              ' --sRNAfile ' + outdir_tmp + '/' + outfile +
                               ' --pvalue ' + pvalue + ' --chr ' + chr + ' --extendregion ' + extendregion +
-                              ' --output ' + outdir + '/' + ouputPoisson + ' --threads ' + threads)
+                              ' --output ' + ouputPoisson + ' --threads ' + threads + ' --outdir ' + outdir)
                 else:
                     os.system('python ' + softdir + '/Poisson.py --method rpm --rpm ' + rpm + ' --cleanread ' + cleanread +
-                              ' --genomecovfile ' + outdir + '/' + genomecovfile + '.extend.txt'
-                              ' --sRNAfile ' + outdir + '/' + outfile +
+                              ' --genomecovfile ' + outdir_tmp + '/' + genomecovfile + '.extend.txt'
+                              ' --sRNAfile ' + outdir_tmp + '/' + outfile +
                               ' --pvalue ' + pvalue + ' --chr ' + chr + ' --extendregion ' + extendregion +
-                              ' --output ' + outdir + '/' + ouputPoisson + ' --threads ' + threads)
+                              ' --output ' + ouputPoisson + ' --threads ' + threads + ' --outdir ' + outdir)
             else:
                 if args.count is not None:
                     os.system('python ' + softdir + '/Poisson.py --method count --count ' + count + ' --cleanread ' + cleanread +
-                              ' --genomecovfile ' + outdir + '/' + genomecovfile + '.extend.txt' +
-                              ' --sRNAfile ' + outdir + '/' + outfile +
+                              ' --genomecovfile ' + outdir_tmp + '/' + genomecovfile + '.extend.txt' +
+                              ' --sRNAfile ' + outdir_tmp + '/' + outfile +
                               ' --pvalue ' + pvalue + ' --chr ' + chr + ' --extendregion ' + extendregion +
-                              ' --output ' + outdir + '/' + ouputPoisson + ' --minlen ' + minlen + ' --maxlen ' + maxlen +
-                              ' --threads ' + threads)
+                              ' --output ' + ouputPoisson + ' --minlen ' + minlen + ' --maxlen ' + maxlen +
+                              ' --threads ' + threads + ' --outdir ' + outdir)
                 else:
                     os.system('python ' + softdir + '/Poisson.py --method rpm --rpm ' + rpm + ' --cleanread ' + cleanread +
-                              ' --genomecovfile ' + outdir + '/' + genomecovfile + '.extend.txt'
-                              ' --sRNAfile ' + outdir + '/' + outfile +
+                              ' --genomecovfile ' + outdir_tmp + '/' + genomecovfile + '.extend.txt'
+                              ' --sRNAfile ' + outdir_tmp + '/' + outfile +
                               ' --pvalue ' + pvalue + ' --chr ' + chr + ' --extendregion ' + extendregion +
-                              ' --output ' + outdir + '/' + ouputPoisson + ' --minlen ' + minlen + ' --maxlen ' + maxlen +
-                              ' --threads ' + threads)
-            os.system('rm ' + outdir + '/' + peakInforfile)
-        os.system('rm ' + outdir + '/peak.y_smooth.' + strand + '.txt')
-        os.system('rm ' + outdir + '/' + genomecovfile + '.extend.txt.smooth.windows_size.' + windows_size + '.txt')
-    os.system('rm ' + outdir + '/' + genomecovfile + '.extend.txt')
+                              ' --output ' + ouputPoisson + ' --minlen ' + minlen + ' --maxlen ' + maxlen +
+                              ' --threads ' + threads + ' --outdir ' + outdir)
+
 print('Finish time:', time.asctime(time.localtime(time.time())))

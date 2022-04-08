@@ -61,7 +61,7 @@ def GetResult(samfile, chr, start, end, strand, threshold, cleanread, ID):  # st
     return output
 
 out = open(data + '/sRNA.counts.txt', 'w')
-out.write("sRNA\tChr\tStart\tEnd\tStrand\tLength\tCount\tRPM\n")
+out.write("sRNA\tChr\tStart\tEnd\tStrand\tLength\tCount\tRPM\tPvalue\n")
 samfile = pysam.AlignmentFile(bam, mode, threads=threads)
 for filename in os.listdir(data):
     if re.search('.saf', filename):
@@ -70,9 +70,10 @@ for filename in os.listdir(data):
             df_saf = pd.read_csv(data + '/' + filename, header=0, sep="\t")
             for row in df_saf.itertuples():
                 chr, start, end, strand = str(getattr(row, 'Chr')), getattr(row, 'Start'), getattr(row, 'End'), getattr(row, 'Strand')
-                ID = getattr(row, 'GeneID')
+                ID = getattr(row, 'Site')
+                pvalue = getattr(row, 'Pvalue')
                 output = GetResult(samfile, chr, start-1, end, strand, threshold, cleanread, ID)
-                out.write(output+'\n')
+                out.write(output+'\t'+str(pvalue)+'\n')
         else:
             print('No data for Quantification')
 out.close()

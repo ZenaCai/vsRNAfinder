@@ -2,11 +2,11 @@
 """
 @author: czn
 """
-import re, os
+import os
 import pandas as pd
 import numpy as np
 from scipy.stats import poisson
-from collections import Counter
+import math
 import time
 import argparse
 print('Filter by count or rpm, length and poisson:', time.asctime(time.localtime(time.time())))
@@ -25,6 +25,7 @@ parser.add_argument('--chr', help='specific chromosome', type=str)
 parser.add_argument('--extendregion', help='extending the upstream and downstream 10 nt of the sRNA is considered as '
                                            'the background region, default: 10 nt', default=10, type=int)
 parser.add_argument('--output', help='output file')
+parser.add_argument('--outdir', help='output path')
 parser.add_argument('--threads', help='running threads', type=int)
 
 args = parser.parse_args()
@@ -40,6 +41,7 @@ pvalue = args.pvalue
 chr = args.chr
 extendregion = args.extendregion
 ouputfile = args.output
+ouputdir = args.outdir
 threads = args.threads
 
 df_genomecov_all = pd.DataFrame()
@@ -83,8 +85,13 @@ if os.path.exists(sRNAfile):
         p = max(p_lst)
         p_lst_filter = [i for i in p_lst if i <= 0.05]
         percentage = len(p_lst_filter) / len(p_lst)
+        if len(p_lst) * 0.8 == int(len(p_lst) * 0.8):
+            num = int(len(p_lst) * 0.8)
+        else:
+            num = math.ceil(len(p_lst) * 0.8)
+        p_sRNA = sorted(p_lst)[num - 1]
         if p <= pvalue or (p > pvalue and percentage >= 0.8):
-            return site+'\t'+str(np.percentile(p_lst, 80, interpolation='higher'))
+            return site+'\t'+str(p_sRNA)+'\t'+str('|'.join([str(i) for i in p_lst]))
     from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
     p = ProcessPoolExecutor(threads)
     site_result = []
@@ -92,27 +99,28 @@ if os.path.exists(sRNAfile):
         site_result.append(p.submit(GetSigSite, site, df_filter, df_genomecov_all))
     p.shutdown()
     sig_site = []
-    dict_sig = {}
+    df_site_sig = pd.DataFrame()
     for i in site_result:
         if i.result() is not None:
             site = i.result().split('\t')[0]
             sig = i.result().split('\t')[1]
+            sig_lst = i.result().split('\t')[2]
             sig_site.append(site)
-            if site not in dict_sig:
-                dict_sig[site] = sig
-    df_site_sig = pd.DataFrame([dict_sig]).T
+            df_site_sig.loc[site, 'Pvalue'] = sig
+            df_site_sig.loc[site, 'Pvalue_lst'] = sig_lst
     df_site_sig = df_site_sig.reset_index().rename(columns={"index": "id"})
-    df_site_sig.columns = ["Site", "Pvalue"]
+    df_site_sig.columns = ["Site", "Pvalue", "Pvalue_lst"]
     df_filter_sig = df_filter[df_filter['Site'].isin(sig_site)]
     column = ["Site", "Chr", "Start_min", "End_max", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm"]
     df_filter_sig_ouput = df_filter_sig[column].copy()
     df_filter_sig_ouput = pd.merge(df_filter_sig_ouput, df_site_sig, on='Site')
-    df_filter_sig_ouput.columns = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm", "Pvalue"]
-    df_filter_sig_ouput.to_csv(ouputfile, sep='\t', index=None)
-    column = ["Site", "Chr", "Start_min", "End_max", "Strand"]
-    df_saf = df_filter_sig[column].copy()
-    df_saf.columns = ["GeneID", "Chr", "Start", "End", "Strand"]
+    df_filter_sig_ouput.columns = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm", "Pvalue", "Pvalue_lst"]
+    column = ["Site", "Chr", "Start", "End", "Strand", "Length", "Start_count", "End_count", "Start_rpm", "End_rpm", "Pvalue"]
+    df_filter_sig_ouput[column].to_csv(ouputdir + '/' + ouputfile, sep='\t', index=None)
+    df_filter_sig_ouput.to_csv(ouputdir+'/_tmp/' + ouputfile, sep='\t', index=None)
+    column = ["Site", "Chr", "Start", "End", "Strand", "Pvalue"]
+    df_saf = df_filter_sig_ouput[column].copy()
     df_saf['Strand'].replace('positive', '+', inplace=True)
     df_saf['Strand'].replace('negative', '-', inplace=True)
-    df_saf.to_csv(ouputfile+'.saf', sep='\t', index=None)
+    df_saf.to_csv(ouputdir + '/' + ouputfile+'.saf', sep='\t', index=None)
     print('small RNA region', df_filter[df_filter['Site'].isin(sig_site)].shape[0])

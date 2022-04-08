@@ -108,7 +108,7 @@ for filename in os.listdir(FindPeak_dir):
         if rpm is not None:
             df_sub = df_sub[(df_sub['Start_rpm'] >= rpm) & (df_sub['End_rpm'] >= rpm)]
         if count is not None:
-            df_sub = df_sub[(df_sub['Start_count'] >= rpm) & (df_sub['End_count'] >= rpm)]
+            df_sub = df_sub[(df_sub['Start_count'] >= count) & (df_sub['End_count'] >= count)]
         df_sub['Gap'] = ['.']*df_sub.shape[0]
         df_sub['Strand'] = df_sub['Strand'].replace('negative', '-')
         df_sub['Strand'] = df_sub['Strand'].replace('positive', '+')
